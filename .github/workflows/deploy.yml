@@ -1,0 +1,50 @@
+name: CI/CD — Test, Build, Deploy
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  ci-cd:
+    runs-on: ubuntu-latest # GitHub spins up a fresh Linux VM
+
+    steps:
+      # Step 1: Download your code onto the runner VM
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Install Node.js on the runner
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      # Step 3: Install dependencies and run tests
+      # If tests fail → pipeline stops here → nothing deploys
+      - name: Install & Run Tests
+        run: |
+          npm ci
+          npm test
+
+      # Step 4: Log into DockerHub using GitHub Secrets
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Step 5: Build Docker image and push to DockerHub
+      # Tagged with :latest AND the exact git commit SHA
+      - name: Build & Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/autodeploypro:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/autodeploypro:${{ github.sha }}
+
+      # Step 6: Tell Render to pull the new image and redeploy
+      - name: Trigger Render Deployment
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"

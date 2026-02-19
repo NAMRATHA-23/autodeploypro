@@ -8,7 +8,7 @@ WORKDIR /app
 # Copy package files FIRST (layer caching trick)
 # If package.json hasn't changed, npm ci is cached
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm install --production
 
 # Copy the rest of the app code
 COPY . .

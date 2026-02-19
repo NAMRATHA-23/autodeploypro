@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "autodeploypro"
+    static_configs:
+      - targets: ["host.docker.internal:3000"]
+      # host.docker.internal = your laptop's localhost
+      # from inside Docker's perspective

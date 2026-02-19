@@ -19,7 +19,7 @@ app.get('/health', (req, res) => {
 
 // Route 2: Items — proves DB connection works
 app.get('/items', async (req, res) => {
-    res.json({ items: [], message: 'Connected to MongoDB Atlas!' });
+    res.json({ items: [], message: 'CI/CD pipeline is working!' });
 });
 
 // Route 3: Prometheus metrics endpoint
