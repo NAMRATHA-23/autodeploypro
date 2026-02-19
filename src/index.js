@@ -33,6 +33,11 @@ const start = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     app.listen(PORT, () => console.log(`Server on port ${PORT}`));
 };
-start();
+
+// Only start server if this file is run directly (not imported by tests)
+if (require.main === module) {
+    start();
+}
+
 
 module.exports = app; // needed for tests
