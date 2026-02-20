@@ -14,7 +14,12 @@ app.use(express.json());
 
 // Route 1: Health check — used by Render to verify app is alive
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok', uptime: process.uptime() });
+    res.json({
+        status: 'ok',
+        uptime: process.uptime(),
+        message: 'Built by Namratha - DevOps Pipeline Working!',
+        timestamp: new Date().toISOString()
+    });
 });
 
 // Route 2: Items — proves DB connection works
